@@ -15,10 +15,10 @@
     - name: Display Linux CPU, RAM, and Disk info
       ansible.builtin.debug:
         msg:
-          - "CPU Cores: {{ ansible_processor_vcpus }}"
-          - "Total RAM (MB): {{ ansible_memtotal_mb }}"
-          - "Free RAM (MB): {{ ansible_memfree_mb }}"
-          - "Disks: {{ ansible_mounts | map(attribute='mount') | zip(ansible_mounts | map(attribute='size_total')) | list }}"
+          - "CPU Cores: {{ ansible_processor_vcpus | default('N/A') }}"
+          - "Total RAM (MB): {{ ansible_memtotal_mb | default('N/A') }}"
+          - "Free RAM (MB): {{ ansible_memfree_mb | default('N/A') }}"
+          - "Disks (GB): {{ ansible_mounts | selectattr('size_total', 'defined') | map(attribute='mount') | zip(ansible_mounts | selectattr('size_total', 'defined') | map(attribute='size_total') | map('filesizeformat')) | list }}"
 
 - name: Test Windows connectivity and get system info
   hosts: windows
@@ -36,7 +36,7 @@
     - name: Display Windows CPU, RAM, and Disk info
       ansible.builtin.debug:
         msg:
-          - "CPU Cores: {{ ansible_processor_vcpus }}"
-          - "Total RAM (MB): {{ ansible_memtotal_mb }}"
-          - "Free RAM (MB): {{ ansible_memfree_mb }}"
-          - "Disks (Bytes): {{ ansible_facts['disks'] | default('No disk facts returned') }}"
+          - "CPU Cores: {{ ansible_processor_vcpus | default('N/A') }}"
+          - "Total RAM (MB): {{ ansible_memtotal_mb | default('N/A') }}"
+          - "Free RAM (MB): {{ ansible_memfree_mb | default('N/A') }}"
+          - "Disks: {{ ansible_facts['disks'] | default('No disk facts returned') }}"
