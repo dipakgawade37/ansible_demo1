@@ -1,11 +1,16 @@
 ---
 - name: Test Linux connectivity and get system info
   hosts: linux
-  gather_facts: true
+  gather_facts: false
 
   tasks:
     - name: Ping Linux server
       ansible.builtin.ping:
+
+    - name: Gather Linux hardware facts
+      ansible.builtin.setup:
+        gather_subset:
+          - hardware
 
     - name: Display Linux CPU, RAM, and Disk info
       ansible.builtin.debug:
@@ -17,11 +22,16 @@
 
 - name: Test Windows connectivity and get system info
   hosts: windows
-  gather_facts: true
+  gather_facts: false
 
   tasks:
     - name: Ping Windows server
       ansible.windows.win_ping:
+
+    - name: Gather Windows hardware facts
+      ansible.windows.setup:
+        gather_subset:
+          - hardware
 
     - name: Display Windows CPU, RAM, and Disk info
       ansible.builtin.debug:
@@ -29,4 +39,4 @@
           - "CPU Cores: {{ ansible_processor_vcpus }}"
           - "Total RAM (MB): {{ ansible_memtotal_mb }}"
           - "Free RAM (MB): {{ ansible_memfree_mb }}"
-          - "Disks (Bytes): {{ ansible_facts['disks'] | default(ansible_mounts) }}"
+          - "Disks (Bytes): {{ ansible_facts['disks'] | default('No disk facts returned') }}"
